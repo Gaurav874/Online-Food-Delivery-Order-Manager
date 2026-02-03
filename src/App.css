@@ -1,0 +1,247 @@
+/* --- src/App.css (UPDATED FOR WIDE SCREEN) --- */
+
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --bg-color: #f1f5f9;
+  --card-bg: #ffffff;
+  --text-main: #1e293b;
+  --text-light: #64748b;
+  --border: #e2e8f0;
+  --success: #16a34a;
+  --danger: #dc2626;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  padding: 20px;
+}
+
+/* 1. LAYOUT FIXES (Wider & Cleaner) */
+.dashboard-container {
+  max-width: 95%; /* Screen ka pura use karega */
+  margin: 0 auto;
+}
+
+.app-header {
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-header h1 {
+  font-size: 2rem;
+  color: #0f172a;
+}
+
+/* Grid: Side panels ko 350px de diya taaki khule dikhe */
+.main-layout {
+  display: grid;
+  grid-template-columns: 350px 1fr 350px;
+  gap: 30px; /* Gap badhaya */
+  align-items: start;
+}
+
+/* Responsive Logic */
+@media (max-width: 1200px) {
+  .main-layout { grid-template-columns: 320px 1fr; }
+  .logic-card { grid-column: span 2; } /* Filter box niche aayega */
+}
+@media (max-width: 850px) {
+  .main-layout { grid-template-columns: 1fr; }
+  .logic-card { grid-column: span 1; }
+}
+
+/* 2. CARDS */
+.card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.card h2 {
+  background: #f8fafc;
+  padding: 18px;
+  font-size: 1.1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 3. FORM */
+form { padding: 24px; }
+.input-group { margin-bottom: 18px; }
+.row { display: flex; gap: 15px; }
+
+label {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+input:focus, select:focus {
+  outline: 2px solid var(--primary);
+  border-color: transparent;
+}
+
+/* 4. BUTTONS */
+.btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: 0.2s;
+}
+
+.btn-primary { background-color: var(--primary); color: white; }
+.btn-primary:hover { background-color: var(--primary-hover); }
+
+.btn-action {
+  background-color: var(--primary);
+  color: white;
+  margin-top: 20px;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+}
+
+/* 5. TABLE */
+.table-container { padding: 0; }
+table { width: 100%; border-collapse: collapse; }
+
+th {
+  background: #f1f5f9;
+  text-align: left;
+  padding: 15px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: var(--text-light);
+  font-weight: 700;
+}
+
+td {
+  padding: 15px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.paid { background: #dcfce7; color: var(--success); }
+.unpaid { background: #fee2e2; color: var(--danger); }
+
+/* 6. FILTER SECTION FIXES */
+.logic-card { padding: 24px; }
+.filter-section { margin-bottom: 25px; }
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  font-size: 1rem;
+  white-space: nowrap; /* Text tootne se rokega */
+}
+
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.range-group { margin-top: 25px; }
+.range-group label { display: flex; justify-content: space-between; font-size: 1rem; }
+input[type="range"] { margin-top: 10px; cursor: pointer; width: 100%; accent-color: var(--primary); }
+
+.result-box {
+  margin-top: 20px;
+  padding: 18px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  color: #0369a1;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.result-box.error { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+.result-box.success { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+
+
+
+
+
+
+
+
+/* --- src/App.css --- */
+
+:root {
+  --primary: #2563eb;
+  --bg-color: #f1f5f9;  /* Light Grey jo background mein chahiye */
+  --card-bg: #ffffff;
+  --text-main: #1e293b;
+  --text-light: #64748b;
+  --border: #e2e8f0;
+  --success: #16a34a;
+  --danger: #dc2626;
+}
+
+/* YE HAI MAIN FIX - Isse dhyan se copy karna */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh; /* Pura viewport height lega */
+  background-color: var(--bg-color); /* Color ab pure page pe aayega */
+  overflow-x: hidden; /* Side scrollbar hatane ke liye */
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;       /* Flexbox taki content control ho */
+  justify-content: center; /* Center mein lane ke liye */
+}
+
+/* Container ko thoda loose chhodenge taki wo root ke andar fail sake */
+.dashboard-container {
+  width: 100%;
+  max-width: 1400px; /* Badi screen pe itna wide hoga */
+  margin: 0 auto;    /* Beech mein rakhega */
+  padding: 20px;
+}
+
+/* --- Iske niche baaki ka purana CSS same rahega --- */
+/* ... */
