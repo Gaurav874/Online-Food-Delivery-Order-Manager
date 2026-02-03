@@ -3,29 +3,28 @@ import { Truck, MapPin, CheckCircle, XCircle, Plus, Filter } from 'lucide-react'
 import './App.css';
 
 function App() {
-  // --- 1. STATE MANAGEMENT ---
-
+  // --- STATE MANAGEMENT ---
+  
   const [orders, setOrders] = useState([
-    // Dish field add kiya sample data mein
-    { id: 101, restaurant: "Burger King", dish: "Whopper Burger", items: 2, distance: 3.5, isPaid: false },
-    { id: 102, restaurant: "Dominos", dish: "Farmhouse Pizza", items: 1, distance: 8.0, isPaid: true },
-    { id: 103, restaurant: "KFC", dish: "Chicken Bucket", items: 4, distance: 2.1, isPaid: false },
+    { orderId: 101, restaurantName: "Burger King", dish: "Whopper Burger", itemCount: 2, deliveryDistance: 3.5, isPaid: false },
+    { orderId: 102, restaurantName: "Dominos", dish: "Farmhouse Pizza", itemCount: 1, deliveryDistance: 8.0, isPaid: true },
+    { orderId: 103, restaurantName: "KFC", dish: "Chicken Bucket", itemCount: 4, deliveryDistance: 2.1, isPaid: false },
   ]);
 
   const [form, setForm] = useState({
-    restaurant: '',
-    dish: '', // <--- Naya Field yahan add kiya
-    items: '',
-    distance: '',
+    restaurantName: '',
+    dish: '',
+    itemCount: '',
+    deliveryDistance: '',
     isPaid: 'false'
   });
 
-  const [maxDistance, setMaxDistance] = useState(10); // Default 10km kar diya
+  const [maxDistance, setMaxDistance] = useState(10);
   const [showPaid, setShowPaid] = useState(true);
   const [showUnpaid, setShowUnpaid] = useState(true);
   const [assignment, setAssignment] = useState(null);
 
-  // --- 2. LOGIC ---
+  // --- HANDLERS & LOGIC ---
 
   const handleInput = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -34,52 +33,55 @@ function App() {
   const addOrder = (e) => {
     e.preventDefault();
     
-    // Validation mein Dish bhi check kar rahe hain
-    if(!form.restaurant || !form.dish || !form.items || !form.distance) {
-      alert("Please fill all details including Dish Name!");
+    // Basic validation
+    if(!form.restaurantName || !form.dish || !form.itemCount || !form.deliveryDistance) {
+      alert("Please fill all details!");
       return;
     }
 
     const newOrder = {
-      id: Date.now(),
-      restaurant: form.restaurant,
-      dish: form.dish, // <--- Data save karte waqt dish add kiya
-      items: Number(form.items),
-      distance: Number(form.distance),
+      orderId: Date.now(),
+      restaurantName: form.restaurantName,
+      dish: form.dish,
+      itemCount: Number(form.itemCount),
+      deliveryDistance: Number(form.deliveryDistance),
       isPaid: form.isPaid === 'true'
     };
 
     setOrders([...orders, newOrder]);
-    // Form reset karte waqt dish bhi clear karenge
-    setForm({ restaurant: '', dish: '', items: '', distance: '', isPaid: 'false' });
+    // Reset form
+    setForm({ restaurantName: '', dish: '', itemCount: '', deliveryDistance: '', isPaid: 'false' });
   };
 
+  // Assigns delivery to the nearest unpaid order
   const assignDelivery = () => {
+    // Step 1: Filter eligible orders (Unpaid + Within Range)
     const eligibleOrders = orders.filter(order => 
-      order.isPaid === false && order.distance <= maxDistance
+      order.isPaid === false && order.deliveryDistance <= maxDistance
     );
 
     if (eligibleOrders.length === 0) {
-      setAssignment({ success: false, msg: "❌ No unpaid orders found in this range." });
+      setAssignment({ success: false, msg: "❌ No order available" });
       return;
     }
 
-    eligibleOrders.sort((a, b) => a.distance - b.distance);
+    // Step 2: Sort by distance (Nearest first)
+    eligibleOrders.sort((a, b) => a.deliveryDistance - b.deliveryDistance);
+    
+    // Step 3: Assign to the best match
     const bestMatch = eligibleOrders[0];
     
-    // Message mein bhi Dish ka naam dikhayenge
     setAssignment({ 
       success: true, 
-      msg: `✅ Assigned to Order #${bestMatch.id}: ${bestMatch.items}x ${bestMatch.dish} from ${bestMatch.restaurant} (${bestMatch.distance}km)` 
+      msg: `✅ Assigned to Order #${bestMatch.orderId}: ${bestMatch.itemCount}x ${bestMatch.dish} from ${bestMatch.restaurantName} (${bestMatch.deliveryDistance}km)` 
     });
   };
 
   const displayedOrders = orders.filter(order => {
-    const statusMatch = (order.isPaid && showPaid) || (!order.isPaid && showUnpaid);
-    return statusMatch; 
+    return (order.isPaid && showPaid) || (!order.isPaid && showUnpaid);
   });
 
-  // --- 3. UI RENDER ---
+  // --- UI RENDER ---
   return (
     <div className="dashboard-container">
       <header className="app-header">
@@ -95,13 +97,12 @@ function App() {
             <div className="input-group">
               <label>Restaurant Name</label>
               <input 
-                type="text" name="restaurant" 
-                value={form.restaurant} onChange={handleInput} 
+                type="text" name="restaurantName" 
+                value={form.restaurantName} onChange={handleInput} 
                 placeholder="e.g. Burger King" 
               />
             </div>
 
-            {/* --- NAYA DISH INPUT FIELD --- */}
             <div className="input-group">
               <label>Dish Name</label>
               <input 
@@ -113,18 +114,18 @@ function App() {
             
             <div className="row">
               <div className="input-group">
-                <label>Items (Qty)</label>
+                <label>Item Count</label>
                 <input 
-                  type="number" name="items" 
-                  value={form.items} onChange={handleInput} 
+                  type="number" name="itemCount" 
+                  value={form.itemCount} onChange={handleInput} 
                   placeholder="0" 
                 />
               </div>
               <div className="input-group">
                 <label>Distance (km)</label>
                 <input 
-                  type="number" name="distance" 
-                  value={form.distance} onChange={handleInput} 
+                  type="number" name="deliveryDistance" 
+                  value={form.deliveryDistance} onChange={handleInput} 
                   placeholder="0.0" 
                 />
               </div>
@@ -151,22 +152,22 @@ function App() {
             <table>
               <thead>
                 <tr>
-                  <th>ID</th>
+                  <th>Order ID</th>
                   <th>Restaurant</th>
-                  <th>Dish</th> {/* Table Header mein Dish add kiya */}
-                  <th>Qty</th>
+                  <th>Dish</th>
+                  <th>Item Count</th>
                   <th>Distance</th>
                   <th>Status</th>
                 </tr>
               </thead>
               <tbody>
                 {displayedOrders.map(order => (
-                  <tr key={order.id}>
-                    <td>#{order.id.toString().slice(-4)}</td>
-                    <td>{order.restaurant}</td>
-                    <td><strong>{order.dish}</strong></td> {/* Table Row mein Dish dikhaya */}
-                    <td>{order.items}</td>
-                    <td><MapPin size={14}/> {order.distance} km</td>
+                  <tr key={order.orderId}>
+                    <td>#{order.orderId.toString().slice(-4)}</td>
+                    <td>{order.restaurantName}</td>
+                    <td><strong>{order.dish}</strong></td>
+                    <td>{order.itemCount}</td>
+                    <td><MapPin size={14}/> {order.deliveryDistance} km</td>
                     <td>
                       <span className={`badge ${order.isPaid ? 'paid' : 'unpaid'}`}>
                         {order.isPaid ? 'Paid' : 'Unpaid'}
@@ -189,11 +190,11 @@ function App() {
           <div className="filter-section">
             <label className="checkbox-label">
               <input type="checkbox" checked={showPaid} onChange={e => setShowPaid(e.target.checked)} />
-              Show Paid (Green)
+              Show Paid
             </label>
             <label className="checkbox-label">
               <input type="checkbox" checked={showUnpaid} onChange={e => setShowUnpaid(e.target.checked)} />
-              Show Unpaid (Red)
+              Show Unpaid
             </label>
             
             <div className="range-group">
