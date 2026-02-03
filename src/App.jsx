@@ -3,26 +3,29 @@ import { Truck, MapPin, CheckCircle, XCircle, Plus, Filter } from 'lucide-react'
 import './App.css';
 
 function App() {
-  
+  // --- 1. STATE MANAGEMENT ---
 
   const [orders, setOrders] = useState([
-    { id: 101, restaurant: "Burger King", items: 2, distance: 3.5, isPaid: false },
-    { id: 102, restaurant: "Dominos", items: 1, distance: 8.0, isPaid: true },
-    { id: 103, restaurant: "KFC", items: 4, distance: 2.1, isPaid: false },
+    // Dish field add kiya sample data mein
+    { id: 101, restaurant: "Burger King", dish: "Whopper Burger", items: 2, distance: 3.5, isPaid: false },
+    { id: 102, restaurant: "Dominos", dish: "Farmhouse Pizza", items: 1, distance: 8.0, isPaid: true },
+    { id: 103, restaurant: "KFC", dish: "Chicken Bucket", items: 4, distance: 2.1, isPaid: false },
   ]);
 
   const [form, setForm] = useState({
     restaurant: '',
+    dish: '', // <--- Naya Field yahan add kiya
     items: '',
     distance: '',
     isPaid: 'false'
   });
 
-  const [maxDistance, setMaxDistance] = useState(5);
+  const [maxDistance, setMaxDistance] = useState(10); // Default 10km kar diya
   const [showPaid, setShowPaid] = useState(true);
   const [showUnpaid, setShowUnpaid] = useState(true);
   const [assignment, setAssignment] = useState(null);
 
+  // --- 2. LOGIC ---
 
   const handleInput = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -31,21 +34,24 @@ function App() {
   const addOrder = (e) => {
     e.preventDefault();
     
-    if(!form.restaurant || !form.items || !form.distance) {
-      alert("Please fill all details!");
+    // Validation mein Dish bhi check kar rahe hain
+    if(!form.restaurant || !form.dish || !form.items || !form.distance) {
+      alert("Please fill all details including Dish Name!");
       return;
     }
 
     const newOrder = {
       id: Date.now(),
       restaurant: form.restaurant,
+      dish: form.dish, // <--- Data save karte waqt dish add kiya
       items: Number(form.items),
       distance: Number(form.distance),
       isPaid: form.isPaid === 'true'
     };
 
     setOrders([...orders, newOrder]);
-    setForm({ restaurant: '', items: '', distance: '', isPaid: 'false' });
+    // Form reset karte waqt dish bhi clear karenge
+    setForm({ restaurant: '', dish: '', items: '', distance: '', isPaid: 'false' });
   };
 
   const assignDelivery = () => {
@@ -59,11 +65,12 @@ function App() {
     }
 
     eligibleOrders.sort((a, b) => a.distance - b.distance);
-
     const bestMatch = eligibleOrders[0];
+    
+    // Message mein bhi Dish ka naam dikhayenge
     setAssignment({ 
       success: true, 
-      msg: `✅ Assigned to Order #${bestMatch.id} (${bestMatch.restaurant}) - ${bestMatch.distance}km away!` 
+      msg: `✅ Assigned to Order #${bestMatch.id}: ${bestMatch.items}x ${bestMatch.dish} from ${bestMatch.restaurant} (${bestMatch.distance}km)` 
     });
   };
 
@@ -72,6 +79,7 @@ function App() {
     return statusMatch; 
   });
 
+  // --- 3. UI RENDER ---
   return (
     <div className="dashboard-container">
       <header className="app-header">
@@ -80,7 +88,7 @@ function App() {
 
       <div className="main-layout">
         
-    
+        {/* PANEL 1: ADD ORDER FORM */}
         <div className="card form-card">
           <h2><Plus size={20}/> Add New Order</h2>
           <form onSubmit={addOrder}>
@@ -90,6 +98,16 @@ function App() {
                 type="text" name="restaurant" 
                 value={form.restaurant} onChange={handleInput} 
                 placeholder="e.g. Burger King" 
+              />
+            </div>
+
+            {/* --- NAYA DISH INPUT FIELD --- */}
+            <div className="input-group">
+              <label>Dish Name</label>
+              <input 
+                type="text" name="dish" 
+                value={form.dish} onChange={handleInput} 
+                placeholder="e.g. Cheese Pizza" 
               />
             </div>
             
@@ -124,7 +142,7 @@ function App() {
           </form>
         </div>
 
-      
+        {/* PANEL 2: ORDERS LIST TABLE */}
         <div className="card list-card">
           <div className="card-header">
             <h2>All Orders View ({displayedOrders.length})</h2>
@@ -135,7 +153,8 @@ function App() {
                 <tr>
                   <th>ID</th>
                   <th>Restaurant</th>
-                  <th>Items</th>
+                  <th>Dish</th> {/* Table Header mein Dish add kiya */}
+                  <th>Qty</th>
                   <th>Distance</th>
                   <th>Status</th>
                 </tr>
@@ -145,6 +164,7 @@ function App() {
                   <tr key={order.id}>
                     <td>#{order.id.toString().slice(-4)}</td>
                     <td>{order.restaurant}</td>
+                    <td><strong>{order.dish}</strong></td> {/* Table Row mein Dish dikhaya */}
                     <td>{order.items}</td>
                     <td><MapPin size={14}/> {order.distance} km</td>
                     <td>
@@ -155,14 +175,14 @@ function App() {
                   </tr>
                 ))}
                 {displayedOrders.length === 0 && (
-                  <tr><td colSpan="5" className="empty-msg">No orders found</td></tr>
+                  <tr><td colSpan="6" className="empty-msg">No orders found</td></tr>
                 )}
               </tbody>
             </table>
           </div>
         </div>
 
-      
+        {/* PANEL 3: LOGIC & ASSIGNMENT */}
         <div className="card logic-card">
           <h2><Filter size={20}/> Filter & Assign</h2>
           
