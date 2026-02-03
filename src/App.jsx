@@ -3,62 +3,52 @@ import { Truck, MapPin, CheckCircle, XCircle, Plus, Filter } from 'lucide-react'
 import './App.css';
 
 function App() {
-  // --- 1. STATE MANAGEMENT (Data Store) ---
   
-  // Saare Orders yahan store honge
+
   const [orders, setOrders] = useState([
     { id: 101, restaurant: "Burger King", items: 2, distance: 3.5, isPaid: false },
     { id: 102, restaurant: "Dominos", items: 1, distance: 8.0, isPaid: true },
     { id: 103, restaurant: "KFC", items: 4, distance: 2.1, isPaid: false },
   ]);
 
-  // Form ka data
   const [form, setForm] = useState({
     restaurant: '',
     items: '',
     distance: '',
-    isPaid: 'false' // String mein store kar rahe hain initially
+    isPaid: 'false'
   });
 
-  // Filter & Logic States
-  const [maxDistance, setMaxDistance] = useState(10);
+  const [maxDistance, setMaxDistance] = useState(5);
   const [showPaid, setShowPaid] = useState(true);
   const [showUnpaid, setShowUnpaid] = useState(true);
-  const [assignment, setAssignment] = useState(null); // Result dikhane ke liye
+  const [assignment, setAssignment] = useState(null);
 
-  // --- 2. FUNCTIONAL LOGIC ---
 
-  // Input Change Handle karna
   const handleInput = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Order Add karna
   const addOrder = (e) => {
-    e.preventDefault(); // Page refresh hone se rokega
+    e.preventDefault();
     
-    // Validation: Agar kuch khali hai to roko
     if(!form.restaurant || !form.items || !form.distance) {
       alert("Please fill all details!");
       return;
     }
 
     const newOrder = {
-      id: Date.now(), // Unique ID generate karega
+      id: Date.now(),
       restaurant: form.restaurant,
       items: Number(form.items),
       distance: Number(form.distance),
-      isPaid: form.isPaid === 'true' // String se Boolean convert logic
+      isPaid: form.isPaid === 'true'
     };
 
     setOrders([...orders, newOrder]);
-    // Form Reset
     setForm({ restaurant: '', items: '', distance: '', isPaid: 'false' });
   };
 
-  // Delivery Assign karna (MAIN INTERVIEW LOGIC)
   const assignDelivery = () => {
-    // Step 1: Sirf UNPAID orders dhundo jo Range mein hain
     const eligibleOrders = orders.filter(order => 
       order.isPaid === false && order.distance <= maxDistance
     );
@@ -68,10 +58,8 @@ function App() {
       return;
     }
 
-    // Step 2: Distance ke hisab se Sort karo (Nearest First)
     eligibleOrders.sort((a, b) => a.distance - b.distance);
 
-    // Step 3: Sabse pehla wala utha lo
     const bestMatch = eligibleOrders[0];
     setAssignment({ 
       success: true, 
@@ -79,16 +67,11 @@ function App() {
     });
   };
 
-  // Table ke liye Filtered Data generate karna
   const displayedOrders = orders.filter(order => {
     const statusMatch = (order.isPaid && showPaid) || (!order.isPaid && showUnpaid);
-    // Table me hum saare distance dikhayenge, bas filter status ka rakhenge visual ke liye
-    // Lekin agar company bole distance bhi filter karo table me, to niche wali line uncomment kar dena
-    // const distanceMatch = order.distance <= maxDistance; 
     return statusMatch; 
   });
 
-  // --- 3. UI RENDER ---
   return (
     <div className="dashboard-container">
       <header className="app-header">
@@ -97,7 +80,7 @@ function App() {
 
       <div className="main-layout">
         
-        {/* PANEL 1: ADD ORDER FORM */}
+    
         <div className="card form-card">
           <h2><Plus size={20}/> Add New Order</h2>
           <form onSubmit={addOrder}>
@@ -141,7 +124,7 @@ function App() {
           </form>
         </div>
 
-        {/* PANEL 2: ORDERS LIST TABLE */}
+      
         <div className="card list-card">
           <div className="card-header">
             <h2>All Orders View ({displayedOrders.length})</h2>
@@ -179,7 +162,7 @@ function App() {
           </div>
         </div>
 
-        {/* PANEL 3: LOGIC & ASSIGNMENT */}
+      
         <div className="card logic-card">
           <h2><Filter size={20}/> Filter & Assign</h2>
           
