@@ -245,3 +245,26 @@ html, body {
 
 /* --- Iske niche baaki ka purana CSS same rahega --- */
 /* ... */
+
+
+
+
+
+/* --- INPUTS & DROPDOWN KO WHITE KARNE KE LIYE --- */
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #ffffff; /* Ye background ko White karega */
+  color: #1e293b;            /* Text ko Dark Grey karega taaki dikhe */
+  transition: border-color 0.2s;
+}
+
+/* Focus hone par Blue border */
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
